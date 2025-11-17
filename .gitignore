@@ -1,0 +1,15 @@
+.vscode/
+
+bin/
+
+Datapoints/
+
+OutputFiles/
+
+SampleTestCases/
+
+TestOutputFiles/
+
+*.class
+
+src/WarmUp.txt
