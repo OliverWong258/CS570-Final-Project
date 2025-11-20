@@ -1,5 +1,8 @@
 from utils import stringgen
 import numpy as np
+import sys
+import time
+import psutil
 
 MAPPING = {"A" : 0, "C" : 1, "G" : 2, "T" : 3, "_": "_"}
 SCORE_MATRIX = np.array([[0,110,48,94],
@@ -8,6 +11,16 @@ SCORE_MATRIX = np.array([[0,110,48,94],
                         [94,48,110,0]])
 DELTA = 30
 
+start_time = 0.0
+end_time = 0.0
+start_mem = 0.0
+end_mem = 0.0
+
+def process_memory(): 
+    process = psutil.Process() 
+    memory_info = process.memory_info() 
+    memory_consumed = int(memory_info.rss/1024) 
+    return memory_consumed 
 
 def parse_string_to_indices(s):
     return np.array([MAPPING[c] for c in s])
@@ -17,8 +30,13 @@ def parse_indices_to_string(indices):
     return ''.join([reverse_mapping[i] for i in indices])
 
 def vanillaMinEdit(s, t):
+    global start_time, end_time, start_mem, end_mem
+
     s = parse_string_to_indices(s)
     t = parse_string_to_indices(t)
+
+    start_time = time.time()
+    start_mem = process_memory()
 
     work_table = np.zeros((len(s) + 1, len(t) + 1))
 
@@ -34,6 +52,10 @@ def vanillaMinEdit(s, t):
                 work_table[i-1][j] + DELTA,
                 work_table[i][j-1] + DELTA
             )
+
+    end_time = time.time()
+    end_mem = process_memory()
+
     return work_table[len(s)][len(t)], work_table
 
 def memEfficientMinEdit(s, t):
@@ -94,18 +116,37 @@ def backtrack(worktable, s, t):
     return score, ''.join(aligned_s), ''.join(aligned_t)
 
 if __name__ == "__main__":
-    s, t = stringgen("sampleinput.txt")
-    result, wt = vanillaMinEdit(s, t)
-    print("vanilla min edit : ", result)
+    if len(sys.argv) < 3:
+        print("Usage: python sequence_aligner.py <input_file> <output_file>")
+        sys.exit(1)
 
-    result_mem_efficient = memEfficientMinEdit(s, t)
-    print("mem efficient min edit : ", result_mem_efficient)
+    input_path = sys.argv[1]
+    output_path = sys.argv[2]
+
+
+    s, t = stringgen(input_path)
+    result, wt = vanillaMinEdit(s, t)
+    # print("vanilla min edit : ", result)
+
+    # result_mem_efficient = memEfficientMinEdit(s, t)
+    # print("mem efficient min edit : ", result_mem_efficient)
 
     score, aligned_s, aligned_t = backtrack(wt, s, t)
-    print("Backtracked alignment score: ", score)
-    print("Aligned String S: ", aligned_s)
-    print("Aligned String T: ", aligned_t)
+    # print("Backtracked alignment score: ", score)
+    # print("Aligned String S: ", aligned_s)
+    # print("Aligned String T: ", aligned_t)
 
-        
+    time_taken = (end_time - start_time) * 1000 
+    mem_taken = end_mem - start_mem
+
+    try:
+        with open(output_path, 'w') as writer:
+            writer.write(f"{score}\n")
+            writer.write(f"{aligned_s}\n")
+            writer.write(f"{aligned_t}\n")
+            writer.write(f"{time_taken}\n")
+            writer.write(f"{mem_taken}")
+    except IOError as e:
+        print(f"Error writing output: {e}", file=sys.stderr)    
 
 
