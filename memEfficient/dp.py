@@ -141,7 +141,7 @@ if __name__ == "__main__":
 
     try:
         with open(output_path, 'w') as writer:
-            writer.write(f"{score}\n")
+            writer.write(f"{int(score)}\n")
             writer.write(f"{aligned_s}\n")
             writer.write(f"{aligned_t}\n")
             writer.write(f"{time_taken}\n")
