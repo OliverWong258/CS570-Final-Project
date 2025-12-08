@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python dp.py "$1" "$2"
+python basic.py "$1" "$2"
