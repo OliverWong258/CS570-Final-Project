@@ -1,4 +1,3 @@
-# from utils import stringgen
 import numpy as np
 import sys
 import time
@@ -146,15 +145,10 @@ if __name__ == "__main__":
 
     s, t = stringgen(input_path)
     result, wt = vanillaMinEdit(s, t)
-    # print("vanilla min edit : ", result)
-
-    # result_mem_efficient = memEfficientMinEdit(s, t)
-    # print("mem efficient min edit : ", result_mem_efficient)
+    
 
     score, aligned_s, aligned_t = backtrack(wt, s, t)
-    # print("Backtracked alignment score: ", score)
-    # print("Aligned String S: ", aligned_s)
-    # print("Aligned String T: ", aligned_t)
+
 
     time_taken = (end_time - start_time) * 1000 
     mem_taken = end_mem - start_mem
