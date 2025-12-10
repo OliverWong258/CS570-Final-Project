@@ -2,7 +2,6 @@ import sys
 import time
 import psutil
 import numpy as np
-# from utils import stringgen
 
 def stringgen(input_path):
     with open(input_path, "r") as f:
